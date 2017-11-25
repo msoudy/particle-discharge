@@ -1,3 +1,8 @@
+.DS_Store
+dist/
+server/
+*.map
+
 # Logs
 logs
 *.log
