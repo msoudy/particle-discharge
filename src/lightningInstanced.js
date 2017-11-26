@@ -140,8 +140,7 @@ LightningInstanced.prototype.addTree = function() {
   var offsetStart = (Math.random() - 0.5) * 20;
 
   this.trees.push(new LightningTree(vec3.fromValues(0,this.startPoint[1],0), 
-                                    vec3.fromValues(offsetStart,this.endPoint[1],0),
-                                    this.treeGenerations));
+                                    vec3.fromValues(offsetStart,this.endPoint[1],0), this.config));
   var offsets = [];
   var rotations = [];
   this.totalSegments = 0;
@@ -255,16 +254,15 @@ LightningInstanced.prototype.onUpdate = function(config, camera) {
   this.render(config, camera)
 }
 
-export default function LightningInstanced(generations, mode, webgl) {
+export default function LightningInstanced(mode, config) {
 
   this.mode = mode;
   this.startPoint = vec3.fromValues(0,30,0);
   this.endPoint = vec3.fromValues(0,0,0);
-  //this.trees = [new LightningTree(this.startPoint, this.endPoint, generations),
-  //              new LightningTree(this.startPoint, this.endPoint, generations)];
-  this.trees = [new LightningTree(this.startPoint, this.endPoint, generations)];
+  //this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
+  //              new LightningTree(this.startPoint, this.endPoint, config)];
+  this.trees = [new LightningTree(this.startPoint, this.endPoint, config)];
   this.totalSegments = 0;
-  this.treeGenerations = generations;
 
   this.instance;
 
@@ -281,7 +279,8 @@ export default function LightningInstanced(generations, mode, webgl) {
   };
 
   this.frame = 0;
-  this.webgl = webgl;
+  this.config = config;
+  this.webgl = config.webgl;
   this.currentSourceIndex = 0;
 
   this._projectionMatrix = mat4.create();

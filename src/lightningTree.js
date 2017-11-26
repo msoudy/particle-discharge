@@ -75,7 +75,7 @@ LightningTree.prototype.generateStructure = function(is2D) {
       this.segments.splice(s, 0, new Segment(midPoint, segment.end, g+1, segment.split));
 
       //For adding a branch
-      if (Math.random() < 0.4) {
+      if (Math.random() < 0.4 && this.config.branching) {
         var direction = vec3.create();
         vec3.subtract(direction, midPoint, segment.start);
 
@@ -181,9 +181,9 @@ LightningTree.prototype.getInstanceOffsets = function() {
 
     //set 4th component as branch width
     if (segment.split == 0)
-      offsets.push(1.0);
+      offsets.push(1.0 * this.config.branchWidth);
     else
-      offsets.push(0.4);
+      offsets.push(0.4 * this.config.branchWidth);
   }
   return offsets;
 }
@@ -202,11 +202,12 @@ LightningTree.prototype.getInstanceRotations = function() {
   return rotations;
 }
 
-export default function LightningTree(start, end, gen) {
+export default function LightningTree(start, end, config) {
 
   this.startPoint =  start;
   this.endPoint =  end;
-  this.numGenerations = gen;
+  this.numGenerations = config.numGenerations;
+  this.config = config;
 
   this.segments = [new Segment(this.startPoint, this.endPoint, 0, 0)];
   this.numSegments = 0;

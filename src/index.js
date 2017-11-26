@@ -1,9 +1,8 @@
 import Framework from './framework'
 
 function onLoad(framework) {
-  framework.config.setUpGUI();
-  //framework.lightning.init();
-  framework.lightningInstanced.init();
+  framework.config.setUpGUI(framework.webgl);
+  framework.config.renderer.init();
 }
 
 function onUpdate(framework) {
@@ -18,8 +17,7 @@ function onUpdate(framework) {
     return;
   }
 
-  //framework.lightning.onUpdate(config, framework.camera);
-  framework.lightningInstanced.onUpdate(config, framework.camera);
+  config.renderer.onUpdate(config, framework.camera);
 }
 
 Framework.init(onLoad, onUpdate);

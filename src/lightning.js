@@ -81,7 +81,7 @@ Lightning.prototype.addTree = function() {
   var program = this.webgl.program;
   var varying = this.varying;
 
-  this.trees.push(new LightningTree(this.startPoint, this.endPoint, this.treeGenerations));
+  this.trees.push(new LightningTree(this.startPoint, this.endPoint, this.config));
   var positions = [];
   var colors = [];
   this.totalSegments = 0;
@@ -187,14 +187,13 @@ Lightning.prototype.onUpdate = function(config, camera) {
   this.render(config, camera)
 }
 
-export default function Lightning(generations, webgl) {
+export default function Lightning(config) {
 
   this.startPoint = vec3.fromValues(0,30,0);
   this.endPoint = vec3.fromValues(0,0,0);
-  this.trees = [new LightningTree(this.startPoint, this.endPoint, generations),
-                new LightningTree(this.startPoint, this.endPoint, generations)];
+  this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
+                new LightningTree(this.startPoint, this.endPoint, config)];
   this.totalSegments = 0;
-  this.treeGenerations = generations;
 
   this.varying = {
     POSITION: 0,
@@ -207,7 +206,8 @@ export default function Lightning(generations, webgl) {
   };
 
   this.frame = 0;
-  this.webgl = webgl;
+  this.config = config;
+  this.webgl = config.webgl;
   this.currentSourceIndex = 0;
 
   this._projectionMatrix = mat4.create();
