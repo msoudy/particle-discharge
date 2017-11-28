@@ -21,7 +21,7 @@ function createShader(gl, source, type) {
   gl.deleteShader(shader);
 }
 
-WebGL2.prototype.createPrograms = function(fileNames) {
+WebGL2.prototype.createPrograms = function(fileNames, postFileNames) {
     
   var gl = this.gl;
 
@@ -35,6 +35,19 @@ WebGL2.prototype.createPrograms = function(fileNames) {
     this.programs[i] = createProgram(gl, vertexShader, fragmentShader);
     this.programs[i].attributeBuffers = [];
   }
+
+  if (postFileNames) {
+    for (var i = fileNames.length; i < fileNames.length + postFileNames.length; i++) {
+      var vertexShaderSource = require('./shaders/post/post-vert.glsl');
+      var fragmentShaderSource = require('./shaders/post/' + postFileNames[i-fileNames.length] + '-frag.glsl');
+
+      var vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+      var fragmentShader = createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
+      this.programs[i] = createProgram(gl, vertexShader, fragmentShader);
+      this.programs[i].attributeBuffers = [];
+    }
+  }
+  //console.log(this.programs);
     
   return this.programs;
 }
@@ -70,16 +83,12 @@ export default function WebGL2() {
     this.canvas = document.getElementById('canvas');
     this.gl = canvas.getContext('webgl2');
 
-    this.program = {
-      TRANSFORM: 0,
-      DRAW: 1,
-      PARTICLES: 0
-    }
-
     this.programs = [];
     this.vertexBuffers = [];
     this.vertexArrays = [];
     this.transformFeedbacks = [];
+    this.framebuffers = [];
+    this.textures = [];
 
     window.addEventListener('resize', function() {
         resize(canvas);

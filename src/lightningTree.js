@@ -166,7 +166,7 @@ LightningTree.prototype.getColors = function() {
   return colors;
 }
 
-LightningTree.prototype.getInstanceOffsets = function() {
+LightningTree.prototype.getInstanceOffsets = function(scale) {
   var offsets = [];
   for (var s = 0; s < this.segments.length; s++) {
     var segment = this.segments[s];
@@ -181,9 +181,9 @@ LightningTree.prototype.getInstanceOffsets = function() {
 
     //set 4th component as branch width
     if (segment.split == 0)
-      offsets.push(1.0 * this.config.branchWidth);
+      offsets.push(1.0 * this.config.branchWidth * scale);
     else
-      offsets.push(0.4 * this.config.branchWidth);
+      offsets.push(0.4 * this.config.branchWidth * scale);
   }
   return offsets;
 }
@@ -200,6 +200,17 @@ LightningTree.prototype.getInstanceRotations = function() {
     rotations.push(direction[2]);
   } 
   return rotations;
+}
+
+LightningTree.prototype.getInstanceColors = function(opacity) {
+  var colors = [];
+  for (var s = 0; s < this.segments.length; s++) {
+    colors.push(1.0);
+    colors.push(1.0);
+    colors.push(1.0);
+    colors.push(1.0 * opacity);
+  } 
+  return colors;
 }
 
 export default function LightningTree(start, end, config) {

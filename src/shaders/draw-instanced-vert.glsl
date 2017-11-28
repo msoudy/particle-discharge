@@ -6,13 +6,14 @@
 #define COLOR_LOCATION 3
 
 uniform mat4 u_projectionView;
+uniform float u_time;
 
 layout(location = OFFSET_LOCATION) in vec4 inOffset;
 layout(location = ROTATION_LOCATION) in vec3 inRotation;
 layout(location = POSITION_LOCATION) in vec3 inPos;
-layout(location = COLOR_LOCATION) in vec3 inCol;
+layout(location = COLOR_LOCATION) in vec4 inCol;
 
-out vec3 out_col;
+out vec4 out_col;
 
 void main()
 {
@@ -24,7 +25,7 @@ void main()
     rotation[1] = vec4(sin(angle),cos(angle),0,0);
     rotation[2] = vec4(0,0,1,0);
     rotation[3] = vec4(0,0,0,1);
-
+ 
 	float dist = length(inRotation);
     float branchWidth = inOffset.w;
     //apply rotation * scaling
@@ -32,5 +33,6 @@ void main()
     //apply offset
     pos = vec4(pos.xyz + inOffset.xyz, 1.0);
     gl_Position = u_projectionView * pos;
+
     out_col = inCol;
 }

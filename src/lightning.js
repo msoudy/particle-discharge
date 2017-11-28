@@ -8,7 +8,7 @@ Lightning.prototype.init = function() {
   var webgl = this.webgl;
   var gl = this.webgl.gl;
   var programs = this.webgl.programs;
-  var program = this.webgl.program;
+  var program = this.program;
   var varying = this.varying;
   var uniform = this.uniform;
   var num_instances = this.numInstances;
@@ -78,7 +78,7 @@ Lightning.prototype.addTree = function() {
   var webgl = this.webgl;
   var gl = this.webgl.gl;
   var programs = this.webgl.programs;
-  var program = this.webgl.program;
+  var program = this.program;
   var varying = this.varying;
 
   this.trees.push(new LightningTree(this.startPoint, this.endPoint, this.config));
@@ -117,7 +117,7 @@ Lightning.prototype.transform = function(config) {
   var webgl = this.webgl;
   var gl = webgl.gl;
   var varying = this.varying;
-  var prog = webgl.programs[webgl.program.TRANSFORM];
+  var prog = webgl.programs[this.program.TRANSFORM];
 
   var destinationIndex = (this.currentSourceIndex + 1) % 2;
   var sourceVAO = webgl.vertexArrays[this.currentSourceIndex];
@@ -155,7 +155,7 @@ Lightning.prototype.render = function(config, camera) {
   var gl = webgl.gl;
   var varying = this.varying;
   var uniform = this.uniform;
-  var prog = webgl.programs[webgl.program.DRAW];
+  var prog = webgl.programs[this.program.DRAW];
   
   camera.updateMatrixWorld();
   mat4.invert(this._viewMatrix, camera.matrixWorld.elements);
@@ -189,11 +189,16 @@ Lightning.prototype.onUpdate = function(config, camera) {
 
 export default function Lightning(config) {
 
-  this.startPoint = vec3.fromValues(0,30,0);
-  this.endPoint = vec3.fromValues(0,0,0);
+  this.startPoint = vec3.fromValues(0,15,0);
+  this.endPoint = vec3.fromValues(0,-15,0);
   this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
                 new LightningTree(this.startPoint, this.endPoint, config)];
   this.totalSegments = 0;
+
+  this.program = {
+    TRANSFORM: 0,
+    DRAW: 1
+  }
 
   this.varying = {
     POSITION: 0,

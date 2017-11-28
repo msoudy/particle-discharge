@@ -5,6 +5,7 @@ import WebGL2 from './webgl.js';
 import Config from './config';
 import { PerspectiveCamera } from 'three';
 import OrbitControls from 'three-orbitcontrols';
+import { Spector } from 'spectorjs';
 
 import './style.scss';
 
@@ -19,8 +20,11 @@ function init(callback, update) {
     stats.domElement.style.position = 'absolute';
     stats.domElement.style.left = '0px';
     stats.domElement.style.top = '0px';
-    if (DEBUG)
+    if (DEBUG) {
+      const spector = new Spector();
+      spector.displayUI();
       document.body.appendChild(stats.domElement);
+    }
     
     framework.stats = stats;
     framework.webgl = new WebGL2();
@@ -33,7 +37,7 @@ function init(callback, update) {
     framework.cameraControls.enableZoom = true;
     framework.cameraControls.rotateSpeed = 0.5;
 
-    framework.camera.position.set(0, 0, 75);
+    framework.camera.position.set(0, 0, 40);
     framework.cameraControls.target.set(0, 0, 0);
 
     (function tick() {

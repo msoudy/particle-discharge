@@ -18,19 +18,23 @@ Config.prototype.setUpGUI = function() {
     }
   });
 
-  this.gui.add(this, 'rendererType', [LINE, INSTANCE]).name("Mode").onChange(function(value) {
+  this.gui.add(this, 'rendererType', [LINE, INSTANCE]).name("Mode").onChange(function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'branching').name("Branching").onChange( function(width) {
+  this.gui.add(this, 'branching').name("Branching").onChange( function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'branchWidth', 1.0, 5.0).name("Branch Width").onChange( function(width) {
+  this.gui.add(this, 'branchWidth', 1.0, 5.0).name("Branch Width").onChange( function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'numGenerations', 1.0, 10.0).name("Generations").onChange( function(gen) {
+  this.gui.add(this, 'numGenerations', 0.0, 10.0).step(1.0).name("Generations").onChange( function() {
+    this.object.resetRenderer();
+  });
+
+  this.gui.add(this, 'glow').name("Glow").onChange( function() {
     this.object.resetRenderer();
   });
 
@@ -51,12 +55,13 @@ export default function Config(webgl) {
   this.gui = new DAT.GUI();
   this.webgl = webgl;
 
-  //Lightning Tree Variables
+  // Lightning Tree Variables
   this.numGenerations = 5.0;
   this.branching = true;
+  this.glow = true;
 
-  //Instance Variables
-  this.branchWidth = 4.0;
+  // Instance Variables
+  this.branchWidth = 1.5;
 
   this.pause = false;
   this.rendererType = INSTANCE;

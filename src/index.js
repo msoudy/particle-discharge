@@ -1,4 +1,5 @@
 import Framework from './framework'
+const THREE = require('three');
 
 function onLoad(framework) {
   framework.config.setUpGUI(framework.webgl);
@@ -8,12 +9,11 @@ function onLoad(framework) {
 function onUpdate(framework) {
   var config = framework.config;
   var programs = framework.webgl.programs;
-  var program = framework.webgl.program;
 
   if (config.pause)
     return;
 
-  if (!programs[program.PARTICLES] || !programs[program.DRAW]) {
+  if (!programs[0] || !programs[1]) {
     return;
   }
 
