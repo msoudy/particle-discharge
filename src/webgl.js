@@ -1,4 +1,4 @@
-function createProgram(gl, vertexShader, fragmentShader) {
+WebGL2.prototype.createProgram = function(gl, vertexShader, fragmentShader) {
   var program = gl.createProgram();
   gl.attachShader(program, vertexShader);
   gl.attachShader(program, fragmentShader);
@@ -10,7 +10,7 @@ function createProgram(gl, vertexShader, fragmentShader) {
   gl.deleteProgram(program);
 }
 
-function createShader(gl, source, type) {
+WebGL2.prototype.createShader = function(gl, source, type) {
   var shader = gl.createShader(type);
   gl.shaderSource(shader, source);
   gl.compileShader(shader);
@@ -21,7 +21,7 @@ function createShader(gl, source, type) {
   gl.deleteShader(shader);
 }
 
-WebGL2.prototype.createPrograms = function(fileNames, postFileNames) {
+WebGL2.prototype.createPrograms = function(programs, fileNames, postFileNames) {
     
   var gl = this.gl;
 
@@ -30,10 +30,10 @@ WebGL2.prototype.createPrograms = function(fileNames, postFileNames) {
     var vertexShaderSource = require('./shaders/' + fileNames[i] + '-vert.glsl');
     var fragmentShaderSource = require('./shaders/' + fileNames[i] + '-frag.glsl');
 
-    var vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-    var fragmentShader = createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
-    this.programs[i] = createProgram(gl, vertexShader, fragmentShader);
-    this.programs[i].attributeBuffers = [];
+    var vertexShader = this.createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+    var fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
+    programs[i] = this.createProgram(gl, vertexShader, fragmentShader);
+    programs[i].attributeBuffers = [];
   }
 
   if (postFileNames) {
@@ -41,26 +41,22 @@ WebGL2.prototype.createPrograms = function(fileNames, postFileNames) {
       var vertexShaderSource = require('./shaders/post/post-vert.glsl');
       var fragmentShaderSource = require('./shaders/post/' + postFileNames[i-fileNames.length] + '-frag.glsl');
 
-      var vertexShader = createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-      var fragmentShader = createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
-      this.programs[i] = createProgram(gl, vertexShader, fragmentShader);
-      this.programs[i].attributeBuffers = [];
+      var vertexShader = this.createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
+      var fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
+      programs[i] = this.createProgram(gl, vertexShader, fragmentShader);
+      programs[i].attributeBuffers = [];
     }
   }
-  //console.log(this.programs);
-    
-  return this.programs;
 }
 
-WebGL2.prototype.createVBO = function(vaoIndex, bufferIndex, size, data) {
+WebGL2.prototype.createVBO = function(vertexBuffers, bufferIndex, size, data) {
   var gl = this.gl;
 
-  this.vertexBuffers[vaoIndex][bufferIndex] = gl.createBuffer();
-  gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[vaoIndex][bufferIndex]);
+  vertexBuffers[bufferIndex] = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffers[bufferIndex]);
   gl.bufferData(gl.ARRAY_BUFFER, data, gl.STREAM_COPY);
   gl.vertexAttribPointer(bufferIndex, size, gl.FLOAT, false, 0, 0);
   gl.enableVertexAttribArray(bufferIndex);
-
 }
     
 WebGL2.prototype.setUniformLocationsAtIndices = function (program, uniformNames, uniformIndices) {
@@ -77,23 +73,14 @@ WebGL2.prototype.setUniformLocationsAtIndices = function (program, uniformNames,
   return program.uniformLocations;
 }
 
-
 export default function WebGL2() {
 	   
-    this.canvas = document.getElementById('canvas');
-    this.gl = canvas.getContext('webgl2');
+  this.canvas = document.getElementById('canvas');
+  this.gl = canvas.getContext('webgl2');
 
-    this.programs = [];
-    this.vertexBuffers = [];
-    this.vertexArrays = [];
-    this.transformFeedbacks = [];
-    this.framebuffers = [];
-    this.textures = [];
-
-    window.addEventListener('resize', function() {
-        resize(canvas);
-    }, false); 
-
+  window.addEventListener('resize', function() {
+      resize(canvas);
+  }, false);
 }
 
 function resize(canvas) {

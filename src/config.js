@@ -2,11 +2,15 @@ import { webgl } from './framework';
 import DAT from 'dat-gui';
 import Lightning from './lightning';
 import LightningInstanced from './lightningInstanced';
-
-const DRAWING_MODE = 1; // 0 points, 1 triangles
+import Grid from './grid';
+import Ball from './ball';
 
 const LINE = 'Line';
 const INSTANCE = 'Instance';
+const BOLT = "Bolt";
+
+const DRAWING_MODE = 1; // 0 points, 1 triangles
+const RENDERER_TYPE = BOLT;
 
 Config.prototype.setUpGUI = function() {
 
@@ -18,7 +22,7 @@ Config.prototype.setUpGUI = function() {
     }
   });
 
-  this.gui.add(this, 'rendererType', [LINE, INSTANCE]).name("Mode").onChange(function() {
+  this.gui.add(this, 'rendererType', [LINE, INSTANCE, BOLT]).name("Mode").onChange(function() {
     this.object.resetRenderer();
   });
 
@@ -46,6 +50,8 @@ Config.prototype.resetRenderer = function() {
     config.renderer = new Lightning(config);
   } else if (config.rendererType == INSTANCE) {
     config.renderer = new LightningInstanced(DRAWING_MODE, config);
+  } else if (config.rendererType == BOLT) {
+    config.renderer = new Ball(config, 50, 0.2, config.gridWidth);
   }
   config.renderer.init();
 }
@@ -64,6 +70,11 @@ export default function Config(webgl) {
   this.branchWidth = 1.5;
 
   this.pause = false;
-  this.rendererType = INSTANCE;
-  this.renderer = new LightningInstanced(DRAWING_MODE, this);
+  this.rendererType = RENDERER_TYPE;
+
+  this.gridWidth = 10;
+  this.grid = new Grid(this, this.gridWidth, 10);
+  this.grid.init();
+
+  this.resetRenderer();
 }

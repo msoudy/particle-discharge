@@ -1,14 +1,13 @@
-import Framework from './framework'
 const THREE = require('three');
+import Framework from './framework'
 
 function onLoad(framework) {
   framework.config.setUpGUI(framework.webgl);
-  framework.config.renderer.init();
 }
 
 function onUpdate(framework) {
   var config = framework.config;
-  var programs = framework.webgl.programs;
+  var programs = config.renderer.programs;
 
   if (config.pause)
     return;
@@ -18,6 +17,8 @@ function onUpdate(framework) {
   }
 
   config.renderer.onUpdate(config, framework.camera);
+  if (config.rendererType == 'Bolt')
+    config.grid.onUpdate(config, framework.camera);
 }
 
 Framework.init(onLoad, onUpdate);

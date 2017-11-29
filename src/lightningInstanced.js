@@ -77,9 +77,8 @@ LightningInstanced.prototype.createInstance = function() {
 }
 
 LightningInstanced.prototype.addTree = function() {
-  var webgl = this.webgl;
   var gl = this.webgl.gl;
-  var programs = this.webgl.programs;
+  var programs = this.programs;
   var program = this.program;
   var varying = this.varying;
 
@@ -91,25 +90,22 @@ LightningInstanced.prototype.addTree = function() {
   var instance = this.createInstance();
 
   for (var vaoIndex = 0; vaoIndex < 2; ++vaoIndex) {
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl.vertexBuffers[vaoIndex][this.varying.OFFSET]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[vaoIndex][this.varying.OFFSET]);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(instance.offsets), gl.STREAM_COPY);
    
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl.vertexBuffers[vaoIndex][this.varying.ROTATION]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[vaoIndex][this.varying.ROTATION]);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(instance.rotations), gl.STREAM_COPY); 
 
-    // gl.bindBuffer(gl.ARRAY_BUFFER, webgl.vertexBuffers[vaoIndex][this.varying.POSITION]);
-    // gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(instance.positions), gl.STREAM_COPY); 
-
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl.vertexBuffers[vaoIndex][this.varying.COLOR]);
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[vaoIndex][this.varying.COLOR]);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(instance.colors), gl.STREAM_COPY); 
 
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, webgl.transformFeedbacks[vaoIndex]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, webgl.vertexBuffers[vaoIndex][this.varying.OFFSET]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, webgl.vertexBuffers[vaoIndex][this.varying.ROTATION]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, webgl.vertexBuffers[vaoIndex][this.varying.COLOR]);
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.transformFeedbacks[vaoIndex]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.vertexBuffers[vaoIndex][this.varying.OFFSET]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, this.vertexBuffers[vaoIndex][this.varying.ROTATION]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, this.vertexBuffers[vaoIndex][this.varying.COLOR]);
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
   }
 }
@@ -119,13 +115,13 @@ LightningInstanced.prototype.init = function() {
 
   var webgl = this.webgl;
   var gl = this.webgl.gl;
-  var programs = this.webgl.programs;
   var program = this.program;
   var varying = this.varying;
   var uniform = this.uniform;
 
-  programs = this.webgl.createPrograms(['emit-instanced', 'draw-instanced'],
+  this.webgl.createPrograms(this.programs, ['emit-instanced', 'draw-instanced'],
                                        ['horizontal-blur', 'vertical-blur', 'gaussian-blur']);
+  var programs = this.programs;
 
   var varyings = ['outOffset', 'outRotation', 'outColor'];
   gl.transformFeedbackVaryings(programs[program.TRANSFORM], varyings, gl.SEPARATE_ATTRIBS);
@@ -133,32 +129,32 @@ LightningInstanced.prototype.init = function() {
 
   var instance = this.createInstance();
 
-  webgl.vertexArrays = [gl.createVertexArray(), gl.createVertexArray(), 
+  this.vertexArrays = [gl.createVertexArray(), gl.createVertexArray(), 
                         gl.createVertexArray(), gl.createVertexArray(), gl.createVertexArray()];
-  webgl.transformFeedbacks = [gl.createTransformFeedback(), gl.createTransformFeedback()];
+  this.transformFeedbacks = [gl.createTransformFeedback(), gl.createTransformFeedback()];
 
   for (var vaoIndex = 0; vaoIndex < 2; ++vaoIndex) {
-    gl.bindVertexArray(webgl.vertexArrays[vaoIndex]);
-    webgl.vertexBuffers[vaoIndex] = [];
+    gl.bindVertexArray(this.vertexArrays[vaoIndex]);
+    this.vertexBuffers[vaoIndex] = [];
 
-    webgl.createVBO(vaoIndex, this.varying.OFFSET, 4, instance.offsets);
-    webgl.createVBO(vaoIndex, this.varying.ROTATION, 3, instance.rotations);
-    webgl.createVBO(vaoIndex, this.varying.POSITION, 3, instance.positions);
-    webgl.createVBO(vaoIndex, this.varying.COLOR, 4, instance.colors);
+    webgl.createVBO(this.vertexBuffers[vaoIndex], this.varying.OFFSET, 4, instance.offsets);
+    webgl.createVBO(this.vertexBuffers[vaoIndex], this.varying.ROTATION, 3, instance.rotations);
+    webgl.createVBO(this.vertexBuffers[vaoIndex], this.varying.POSITION, 3, instance.positions);
+    webgl.createVBO(this.vertexBuffers[vaoIndex], this.varying.COLOR, 4, instance.colors);
 
     gl.bindVertexArray(null);
     gl.bindBuffer(gl.ARRAY_BUFFER, null);
     
-    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, webgl.transformFeedbacks[vaoIndex]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, webgl.vertexBuffers[vaoIndex][this.varying.OFFSET]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, webgl.vertexBuffers[vaoIndex][this.varying.ROTATION]);
-    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, webgl.vertexBuffers[vaoIndex][this.varying.COLOR]);
+    gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.transformFeedbacks[vaoIndex]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.vertexBuffers[vaoIndex][this.varying.OFFSET]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, this.vertexBuffers[vaoIndex][this.varying.ROTATION]);
+    gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, this.vertexBuffers[vaoIndex][this.varying.COLOR]);
     gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, null);
   }
 
   for (var vaoIndex = 2; vaoIndex < 5; ++vaoIndex) {
-    gl.bindVertexArray(webgl.vertexArrays[vaoIndex]);
-    webgl.vertexBuffers[vaoIndex] = [];
+    gl.bindVertexArray(this.vertexArrays[vaoIndex]);
+    this.vertexBuffers[vaoIndex] = [];
     var texPos = new Float32Array([
       -1.0, -1.0,
        1.0, -1.0,
@@ -168,8 +164,8 @@ LightningInstanced.prototype.init = function() {
       -1.0, -1.0
     ]);
 
-    webgl.vertexBuffers[vaoIndex][this.varying.TEXPOS] = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, webgl.vertexBuffers[vaoIndex][this.varying.TEXPOS]);
+    this.vertexBuffers[vaoIndex][this.varying.TEXPOS] = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, this.vertexBuffers[vaoIndex][this.varying.TEXPOS]);
     gl.bufferData(gl.ARRAY_BUFFER, texPos, gl.STATIC_DRAW);
     gl.vertexAttribPointer(this.varying.TEXPOS, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(this.varying.TEXPOS);
@@ -190,8 +186,8 @@ LightningInstanced.prototype.init = function() {
                                               programPostUniforms,
                                               programPostIndices);
 
-    webgl.textures[vaoIndex] = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, webgl.textures[vaoIndex]);
+    this.textures[vaoIndex] = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[vaoIndex]);
     gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA,
                     gl.canvas.width, gl.canvas.height, 0,
                     gl.RGBA, gl.UNSIGNED_BYTE, null);
@@ -201,10 +197,10 @@ LightningInstanced.prototype.init = function() {
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-    webgl.framebuffers[vaoIndex] = gl.createFramebuffer();
-    gl.bindFramebuffer(gl.FRAMEBUFFER, webgl.framebuffers[vaoIndex]);
+    this.framebuffers[vaoIndex] = gl.createFramebuffer();
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[vaoIndex]);
      
-    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, webgl.textures[vaoIndex], 0);
+    gl.framebufferTexture2D(gl.FRAMEBUFFER, gl.COLOR_ATTACHMENT0, gl.TEXTURE_2D, this.textures[vaoIndex], 0);
 
     if(gl.checkFramebufferStatus(gl.FRAMEBUFFER) != gl.FRAMEBUFFER_COMPLETE) {
       console.log("Framebuffer error");
@@ -241,13 +237,12 @@ LightningInstanced.prototype.init = function() {
 }
 
 LightningInstanced.prototype.transform = function() {
-  var webgl = this.webgl;
-  var gl = webgl.gl;
+  var gl = this.webgl.gl;
   var varying = this.varying;
-  var prog = webgl.programs[this.program.TRANSFORM];
+  var prog = this.programs[this.program.TRANSFORM];
 
   var destinationIndex = (this.currentSourceIndex + 1) % 2;
-  var sourceVAO = webgl.vertexArrays[this.currentSourceIndex];
+  var sourceVAO = this.vertexArrays[this.currentSourceIndex];
 
   gl.clearColor(0, 0, 0, 1);
   gl.clear(gl.COLOR_BUFFER_BIT);
@@ -256,11 +251,11 @@ LightningInstanced.prototype.transform = function() {
   gl.useProgram(prog);
 
   gl.bindVertexArray(sourceVAO);
-  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, webgl.transformFeedbacks[destinationIndex]);
+  gl.bindTransformFeedback(gl.TRANSFORM_FEEDBACK, this.transformFeedbacks[destinationIndex]);
   
-  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, webgl.vertexBuffers[destinationIndex][varying.OFFSET]);
-  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, webgl.vertexBuffers[destinationIndex][varying.ROTATION]);
-  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, webgl.vertexBuffers[destinationIndex][varying.COLOR]);
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 0, this.vertexBuffers[destinationIndex][varying.OFFSET]);
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 1, this.vertexBuffers[destinationIndex][varying.ROTATION]);
+  gl.bindBufferBase(gl.TRANSFORM_FEEDBACK_BUFFER, 2, this.vertexBuffers[destinationIndex][varying.COLOR]);
 
   gl.uniform1f(prog.uniformLocations[this.uniform.TIME], this.frame);
 
@@ -283,15 +278,14 @@ LightningInstanced.prototype.transform = function() {
 }
 
 LightningInstanced.prototype.render = function(camera) {
-  var webgl = this.webgl;
-  var gl = webgl.gl;
+  var gl = this.webgl.gl;
   var varying = this.varying;
   var uniform = this.uniform;
 
   var frameBufferIndex = null;
   // render to texture
   if (this.config.glow)
-    frameBufferIndex = webgl.framebuffers[this.post.HORIZONTAL_BLUR]
+    frameBufferIndex = this.framebuffers[this.post.HORIZONTAL_BLUR]
 
   {  
     gl.bindFramebuffer(gl.FRAMEBUFFER, frameBufferIndex);
@@ -299,13 +293,13 @@ LightningInstanced.prototype.render = function(camera) {
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    var prog = webgl.programs[this.program.DRAW];
+    var prog = this.programs[this.program.DRAW];
     camera.updateMatrixWorld();
     mat4.invert(this._viewMatrix, camera.matrixWorld.elements);
     mat4.copy(this._projectionMatrix, camera.projectionMatrix.elements);
     mat4.multiply(this._viewProjectionMatrix, this._projectionMatrix, this._viewMatrix);
     
-    gl.bindVertexArray(webgl.vertexArrays[this.currentSourceIndex]);
+    gl.bindVertexArray(this.vertexArrays[this.currentSourceIndex]);
 
     gl.vertexAttribDivisor(varying.OFFSET, 1);
     gl.vertexAttribDivisor(varying.ROTATION, 1);
@@ -313,8 +307,6 @@ LightningInstanced.prototype.render = function(camera) {
 
     gl.useProgram(prog);
     gl.uniformMatrix4fv(prog.uniformLocations[uniform.PROJECTIONVIEW], false, this._viewProjectionMatrix);
-
-    //gl.enable(gl.DEPTH_TEST);
 
     if (this.mode == POINTS)
       gl.drawArraysInstanced(gl.POINTS, 0, this.instance.numPoints, this.totalSegments);
@@ -325,40 +317,39 @@ LightningInstanced.prototype.render = function(camera) {
 }
 
 LightningInstanced.prototype.postProcess = function() {
-  var webgl = this.webgl;
-  var gl = webgl.gl;
+  var gl = this.webgl.gl;
   var uniform = this.uniform;
 
   // render to canvas
   {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, webgl.framebuffers[this.post.VERTICAL_BLUR]);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[this.post.VERTICAL_BLUR]);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    var prog = webgl.programs[this.post.HORIZONTAL_BLUR];
-    gl.bindVertexArray(webgl.vertexArrays[this.post.HORIZONTAL_BLUR]);
+    var prog = this.programs[this.post.HORIZONTAL_BLUR];
+    gl.bindVertexArray(this.vertexArrays[this.post.HORIZONTAL_BLUR]);
 
     gl.useProgram(prog);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, webgl.textures[this.post.HORIZONTAL_BLUR]);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[this.post.HORIZONTAL_BLUR]);
     gl.uniform1i(prog.uniformLocations[uniform.DIFFUSE], 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
   }
 
   {
-    gl.bindFramebuffer(gl.FRAMEBUFFER, webgl.framebuffers[this.post.GAUSSIAN_BLUR]);
+    gl.bindFramebuffer(gl.FRAMEBUFFER, this.framebuffers[this.post.GAUSSIAN_BLUR]);
     gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    var prog = webgl.programs[this.post.VERTICAL_BLUR];
-    gl.bindVertexArray(webgl.vertexArrays[this.post.VERTICAL_BLUR]);
+    var prog = this.programs[this.post.VERTICAL_BLUR];
+    gl.bindVertexArray(this.vertexArrays[this.post.VERTICAL_BLUR]);
 
     gl.useProgram(prog);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, webgl.textures[this.post.VERTICAL_BLUR]);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[this.post.VERTICAL_BLUR]);
     gl.uniform1i(prog.uniformLocations[uniform.DIFFUSE], 0);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -370,16 +361,16 @@ LightningInstanced.prototype.postProcess = function() {
     gl.clearColor(0, 0, 0, 1);
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    var prog = webgl.programs[this.post.GAUSSIAN_BLUR];
-    gl.bindVertexArray(webgl.vertexArrays[this.post.GAUSSIAN_BLUR]);
+    var prog = this.programs[this.post.GAUSSIAN_BLUR];
+    gl.bindVertexArray(this.vertexArrays[this.post.GAUSSIAN_BLUR]);
 
     gl.useProgram(prog);
     gl.activeTexture(gl.TEXTURE0);
-    gl.bindTexture(gl.TEXTURE_2D, webgl.textures[this.post.HORIZONTAL_BLUR]);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[this.post.HORIZONTAL_BLUR]);
     gl.uniform1i(prog.uniformLocations[uniform.DIFFUSE], 0);
 
     gl.activeTexture(gl.TEXTURE1);
-    gl.bindTexture(gl.TEXTURE_2D, webgl.textures[this.post.GAUSSIAN_BLUR]);
+    gl.bindTexture(gl.TEXTURE_2D, this.textures[this.post.GAUSSIAN_BLUR]);
     gl.uniform1i(prog.uniformLocations[uniform.BLUR], 1);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
@@ -408,6 +399,13 @@ export default function LightningInstanced(mode, config) {
   this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
                new LightningTree(this.startPoint, this.endPoint, config)];
   this.totalSegments = 0;
+
+  this.programs = [];
+  this.vertexArrays = [];
+  this.vertexBuffers = [];
+  this.transformFeedbacks = [];
+  this.framebuffers = [];
+  this.textures = [];
 
   this.instance;
 
@@ -438,12 +436,9 @@ export default function LightningInstanced(mode, config) {
     BLUR: 3
   };
 
-
   this.frame = 0;
   this.config = config;
   this.webgl = config.webgl;
-  this._glFramebuffer;
-  this._glTexture;
 
   this.currentSourceIndex = 0;
 
