@@ -1,4 +1,5 @@
 import { webgl } from './framework';
+import { vec3 } from 'gl-matrix';
 import DAT from 'dat-gui';
 import Lightning from './lightning';
 import LightningInstanced from './lightningInstanced';
@@ -10,7 +11,7 @@ const INSTANCE = 'Instance';
 const BOLT = "Bolt";
 
 const DRAWING_MODE = 1; // 0 points, 1 triangles
-const RENDERER_TYPE = INSTANCE;
+const RENDERER_TYPE = BOLT;
 
 Config.prototype.setUpGUI = function() {
 
@@ -63,6 +64,8 @@ export default function Config(webgl) {
   this.numGenerations = 5.0;
   this.branching = true;
   this.glow = true;
+  this.startPoint = vec3.fromValues(0,15,0);
+  this.endPoint = vec3.fromValues(0,-15,0);
 
   // Instance Variables
   this.branchWidth = 1.5;

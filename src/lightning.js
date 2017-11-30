@@ -79,7 +79,7 @@ Lightning.prototype.addTree = function() {
   var program = this.program;
   var varying = this.varying;
 
-  this.trees.push(new LightningTree(this.startPoint, this.endPoint, this.config));
+  this.trees.push(new LightningTree(this.config));
   var positions = [];
   var colors = [];
   this.totalSegments = 0;
@@ -154,7 +154,7 @@ Lightning.prototype.render = function(config, camera) {
   var prog = this.programs[this.program.DRAW];
   
   camera.updateMatrixWorld();
-  mat4.invert(this._viewMatrix, camera.matrixWorld.elements);
+  mat4.copy(this._viewMatrix, camera.matrixWorldInverse.elements);
   mat4.copy(this._projectionMatrix, camera.projectionMatrix.elements);
   mat4.multiply(this._viewProjectionMatrix, this._projectionMatrix, this._viewMatrix);
 
@@ -185,10 +185,8 @@ Lightning.prototype.onUpdate = function(config, camera) {
 
 export default function Lightning(config) {
 
-  this.startPoint = vec3.fromValues(0,15,0);
-  this.endPoint = vec3.fromValues(0,-15,0);
-  this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
-                new LightningTree(this.startPoint, this.endPoint, config)];
+  this.trees = [new LightningTree(config),
+                new LightningTree(config)];
   this.totalSegments = 0;
 
   this.programs = [];

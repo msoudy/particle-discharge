@@ -213,10 +213,10 @@ LightningTree.prototype.getInstanceColors = function(opacity) {
   return colors;
 }
 
-export default function LightningTree(start, end, config) {
+export default function LightningTree(config) {
 
-  this.startPoint =  start;
-  this.endPoint =  end;
+  this.startPoint = config.startPoint;
+  this.endPoint = config.endPoint;
   this.numGenerations = config.numGenerations;
   this.config = config;
 

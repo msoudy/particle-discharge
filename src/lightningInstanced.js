@@ -82,10 +82,13 @@ LightningInstanced.prototype.addTree = function() {
   var program = this.program;
   var varying = this.varying;
 
-  var offsetStart = (Math.random() - 0.5) * 20;
+  var offsetEndX = this.endPoint[0] + (Math.random() - 0.5) * 20;
+  var offsetEndY = this.endPoint[1] + (Math.random() - 0.5) * 20;
+  var offsetEndZ = this.endPoint[2] + (Math.random() - 0.5) * 20;
 
-  this.trees.push(new LightningTree(vec3.fromValues(0,this.startPoint[1],0), 
-                                    vec3.fromValues(offsetStart,this.endPoint[1],0), this.config));
+  this.config.endPoint = vec3.fromValues(offsetEndX,offsetEndY,offsetEndZ);
+
+  this.trees.push(new LightningTree(this.config));
 
   var instance = this.createInstance();
 
@@ -394,10 +397,10 @@ LightningInstanced.prototype.onUpdate = function(config, camera) {
 export default function LightningInstanced(mode, config) {
 
   this.mode = mode;
-  this.startPoint = vec3.fromValues(0,15,0);
-  this.endPoint = vec3.fromValues(0,-15,0);
-  this.trees = [new LightningTree(this.startPoint, this.endPoint, config),
-               new LightningTree(this.startPoint, this.endPoint, config)];
+  this.startPoint = config.startPoint;
+  this.endPoint = config.endPoint;
+  this.trees = [new LightningTree(config),
+               new LightningTree(config)];
   this.totalSegments = 0;
 
   this.programs = [];
