@@ -15,24 +15,35 @@ layout(location = COLOR_LOCATION) in vec4 inCol;
 
 out vec4 out_col;
 
+mat4 rotationMatrix(vec3 ax, float angle)
+{
+  ax = normalize(ax);
+  float s = sin(angle);
+  float c = cos(angle);
+  float oc = 1.0 - c;
+
+  return mat4(oc * ax.x * ax.x + c,        oc * ax.x * ax.y - ax.z * s, oc * ax.z * ax.x + ax.y * s, 0.0,
+              oc * ax.x * ax.y + ax.z * s, oc * ax.y * ax.y + c,        oc * ax.y * ax.z - ax.x * s, 0.0,
+              oc * ax.z * ax.x - ax.y * s, oc * ax.y * ax.z + ax.x * s, oc * ax.z * ax.z + c,        0.0,
+              0.0,                         0.0,                         0.0,                         1.0);
+}
+
 void main()
 {
-    //TODO: Create 3D rotation
-    vec3 dir = normalize(inRotation);
-    float angle = atan(dir.x,dir.y);
-    mat4 rotation;
-    rotation[0] = vec4(cos(angle),-sin(angle),0,0);
-    rotation[1] = vec4(sin(angle),cos(angle),0,0);
-    rotation[2] = vec4(0,0,1,0);
-    rotation[3] = vec4(0,0,0,1);
- 
-	float dist = length(inRotation);
-    float branchWidth = inOffset.w;
-    //apply rotation * scaling
-    vec4 pos = rotation * vec4(vec3(inPos.x*branchWidth,inPos.y*dist,inPos.z*branchWidth), 1.0);
-    //apply offset
-    pos = vec4(pos.xyz + inOffset.xyz, 1.0);
-    gl_Position = u_projectionView * pos;
+  vec3 dir = normalize(inRotation);
+  vec3 up = vec3(0,1,0);
 
-    out_col = inCol;
+  float angle = dot(up, dir);
+  vec3 axis = normalize(cross(up, dir));
+  mat4 rotation = rotationMatrix(axis, -acos(angle));
+
+	float dist = length(inRotation);
+  float branchWidth = inOffset.w;
+  //apply rotation * scaling
+  vec4 pos = rotation * vec4(vec3(inPos.x*branchWidth,inPos.y*dist,inPos.z*branchWidth), 1.0);
+  //apply offset
+  pos = vec4(pos.xyz + inOffset.xyz, 1.0);
+  gl_Position = u_projectionView * pos;
+
+  out_col = inCol;
 }

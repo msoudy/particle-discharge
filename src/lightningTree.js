@@ -70,7 +70,7 @@ LightningTree.prototype.generateStructure = function(is2D) {
       midPoint[0] += normal[0];
       midPoint[1] += normal[1];
       if (!is2D)
-        midPoint[2] += (Math.random() - 0.5) * offsetAmount;
+        midPoint[2] += ((Math.random() - 0.5) * 2.0) * offsetAmount;
 
       this.segments.splice(s, 0, new Segment(midPoint, segment.end, g+1, segment.split));
 
@@ -223,6 +223,6 @@ export default function LightningTree(start, end, config) {
   this.segments = [new Segment(this.startPoint, this.endPoint, 0, 0)];
   this.numSegments = 0;
 
-  this.generateStructure(true);
+  this.generateStructure(false);
   //this.generateStructureDEBUG();
 }

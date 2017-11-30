@@ -10,7 +10,7 @@ const INSTANCE = 'Instance';
 const BOLT = "Bolt";
 
 const DRAWING_MODE = 1; // 0 points, 1 triangles
-const RENDERER_TYPE = BOLT;
+const RENDERER_TYPE = INSTANCE;
 
 Config.prototype.setUpGUI = function() {
 
@@ -38,9 +38,7 @@ Config.prototype.setUpGUI = function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'glow').name("Glow").onChange( function() {
-    this.object.resetRenderer();
-  });
+  this.gui.add(this, 'glow').name("Glow");
 
 }
 
