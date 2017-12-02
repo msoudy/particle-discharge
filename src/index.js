@@ -12,12 +12,12 @@ function onUpdate(framework) {
   if (config.pause)
     return;
 
-  if (!programs[0] || !programs[1]) {
+  if (!programs[0] || !programs[1] ) {
     return;
   }
 
   config.renderer.onUpdate(config, framework.camera);
-  if (config.rendererType == 'Bolt')
+  if (config.rendererType == 'Bolt' || config.rendererType == 'Electric CPU')
     config.grid.onUpdate(config, framework.camera);
 }
 

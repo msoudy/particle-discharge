@@ -8,5 +8,5 @@ out vec4 fragColor;
 
 void main(void) {
 
-  fragColor = out_col;
+  fragColor = vec4(normalize(out_col));
 }

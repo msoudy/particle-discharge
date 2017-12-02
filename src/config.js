@@ -5,13 +5,16 @@ import Lightning from './lightning';
 import LightningInstanced from './lightningInstanced';
 import Grid from './grid';
 import Ball from './ball';
+import ElectricBallsCPU from './electricBallsCPU';
+
 
 const LINE = 'Line';
 const INSTANCE = 'Instance';
 const BOLT = "Bolt";
+const ELECTRIC_CPU = "Electric CPU";
 
 const DRAWING_MODE = 1; // 0 points, 1 triangles
-const RENDERER_TYPE = BOLT;
+const RENDERER_TYPE = ELECTRIC_CPU;
 
 Config.prototype.setUpGUI = function() {
 
@@ -23,7 +26,7 @@ Config.prototype.setUpGUI = function() {
     }
   });
 
-  this.gui.add(this, 'rendererType', [LINE, INSTANCE, BOLT]).name("Mode").onChange(function() {
+  this.gui.add(this, 'rendererType', [LINE, INSTANCE, BOLT, ELECTRIC_CPU]).name("Mode").onChange(function() {
     this.object.resetRenderer();
   });
 
@@ -51,6 +54,8 @@ Config.prototype.resetRenderer = function() {
     config.renderer = new LightningInstanced(DRAWING_MODE, config);
   } else if (config.rendererType == BOLT) {
     config.renderer = new Ball(config, 50, 0.2, config.gridWidth);
+  } else if (config.rendererType == ELECTRIC_CPU) {
+    config.renderer = new ElectricBallsCPU(config, 20, 0.2, config.gridWidth);
   }
   config.renderer.init();
 }
