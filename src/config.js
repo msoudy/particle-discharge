@@ -1,20 +1,17 @@
 import { webgl } from './framework';
 import { vec3 } from 'gl-matrix';
 import DAT from 'dat-gui';
-import Lightning from './lightning';
-import LightningInstanced from './lightningInstanced';
 import Grid from './grid';
-import Ball from './ball';
-import ElectricBallsCPU from './electricBallsCPU';
+import ParticleBolt from './particleBolt';
 
+const PARTICLE_BOLT = "Particle Bolt";
 
-const LINE = 'Line';
-const INSTANCE = 'Instance';
-const BOLT = "Bolt";
-const ELECTRIC_CPU = "Electric CPU";
+const RENDERER_TYPE = PARTICLE_BOLT;
 
-const DRAWING_MODE = 1; // 0 points, 1 triangles
-const RENDERER_TYPE = ELECTRIC_CPU;
+const SCENARIO_DEFAULT = 'Default';
+const SCENARIO_GRID = 'Grid';
+
+const SCENARIO = SCENARIO_GRID;
 
 Config.prototype.setUpGUI = function() {
 
@@ -26,36 +23,39 @@ Config.prototype.setUpGUI = function() {
     }
   });
 
-  this.gui.add(this, 'rendererType', [LINE, INSTANCE, BOLT, ELECTRIC_CPU]).name("Mode").onChange(function() {
+  this.gui.add(this, 'showGrid').name("Grid");
+  //this.gui.add(this, 'activateMouse').name("Activate Mouse");
+
+  this.gui.add(this, 'numBalls', 2.0, 1000.0).step(1.0).name("Num Balls").onChange( function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'branching').name("Branching").onChange( function() {
+  this.gui.add(this, 'maxNeighbors', 0.0, 10.0).step(1.0).name("Max Neighbors").onChange( function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'branchWidth', 1.0, 5.0).name("Branch Width").onChange( function() {
+  this.gui.add(this, 'neighborRadius', 0.1, 0.7).name("Neighbor Radius");
+
+  this.gui.add(this, 'ballRadius', 0.01, 1.0).name("Ball Radius").onChange( function() {
     this.object.resetRenderer();
   });
 
-  this.gui.add(this, 'numGenerations', 0.0, 10.0).step(1.0).name("Generations").onChange( function() {
-    this.object.resetRenderer();
-  });
+  this.gui.add(this, 'particlePhysics').name("Particle Physics");
 
-  this.gui.add(this, 'glow').name("Glow");
+
+  this.gui.add(this, 'current').name("Current");
+  this.gui.add(this, 'randomizeCurrent').name("Random Current");
+
+  // this.gui.add(this, 'scenario', [SCENARIO_DEFAULT, SCENARIO_GRID]).name("Scenario").onChange(function() {
+  //   this.object.resetRenderer();
+  // });
 
 }
 
 Config.prototype.resetRenderer = function() {
   var config = this;
-  if (config.rendererType == LINE) {
-    config.renderer = new Lightning(config);
-  } else if (config.rendererType == INSTANCE) {
-    config.renderer = new LightningInstanced(DRAWING_MODE, config);
-  } else if (config.rendererType == BOLT) {
-    config.renderer = new Ball(config, 50, 0.2, config.gridWidth);
-  } else if (config.rendererType == ELECTRIC_CPU) {
-    config.renderer = new ElectricBallsCPU(config, 20, 0.2, config.gridWidth);
+  if (config.rendererType == PARTICLE_BOLT) {
+    config.renderer = new ParticleBolt(config, this.numBalls, 0.02, config.gridWidth);
   }
   config.renderer.init();
 }
@@ -65,22 +65,27 @@ export default function Config(webgl) {
   this.gui = new DAT.GUI();
   this.webgl = webgl;
 
-  // Lightning Tree Variables
-  this.numGenerations = 5.0;
-  this.branching = true;
-  this.glow = true;
-  this.startPoint = vec3.fromValues(0,15,0);
-  this.endPoint = vec3.fromValues(0,-15,0);
-
-  // Instance Variables
-  this.branchWidth = 1.5;
-
   this.pause = false;
   this.rendererType = RENDERER_TYPE;
 
   this.gridWidth = 10;
   this.grid = new Grid(this, this.gridWidth, 10);
   this.grid.init();
+  this.showGrid = false;
+  this.activateMouse = false;
+
+  this.numBalls = 400;
+  this.maxNeighbors = 4;
+  this.neighborRadius = 0.6;
+  this.ballRadius = 0.01;
+  this.particlePhysics = true;
+  this.current = true;
+  this.randomizeCurrent = true;
+  this.scenario = SCENARIO_DEFAULT;
+
+  this.mousePoint;
+  this.mouseActive = false;
+
 
   this.resetRenderer();
 }

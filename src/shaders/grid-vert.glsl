@@ -8,5 +8,6 @@ layout(location = POSITION_LOCATION) in vec3 inPos;
 
 void main()
 {
-    gl_Position = u_projectionView * vec4(inPos,1.0);
+  gl_PointSize = 5.0;
+  gl_Position = u_projectionView * vec4(inPos,1.0);
 }

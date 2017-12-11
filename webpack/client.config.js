@@ -47,7 +47,7 @@ module.exports = {
   },
   plugins: [
     new HtmlWebpackPlugin({
-      title: 'Lightning',
+      title: 'Particle Discharge',
       template: 'src/index.ejs',
     })
   ],

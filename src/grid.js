@@ -1,5 +1,4 @@
 import { mat4, vec3, vec4 } from 'gl-matrix';
-import LightningTree from './lightningTree';
 
 Grid.prototype.init = function() {
   var webgl = this.webgl;
@@ -16,11 +15,11 @@ Grid.prototype.init = function() {
   this.program.attributeBuffers = [];
 
   var data = [];
-  var w = this.width/2;
+  var w = this.width;
 
-  for (var x = -w; x <= w; x++) {
-    for (var y = -w; y <= w; y++) {
-      for (var z = -w; z <= w; z++) {
+  for (var x = 0; x <= w; x++) {
+    for (var y = 0; y <= w; y++) {
+      for (var z = 0; z <= w; z++) {
         data.push(x);
         data.push(y);
         data.push(z);

@@ -21,7 +21,7 @@ WebGL2.prototype.createShader = function(gl, source, type) {
   gl.deleteShader(shader);
 }
 
-WebGL2.prototype.createPrograms = function(programs, fileNames, postFileNames) {
+WebGL2.prototype.createPrograms = function(programs, fileNames) {
     
   var gl = this.gl;
 
@@ -34,18 +34,6 @@ WebGL2.prototype.createPrograms = function(programs, fileNames, postFileNames) {
     var fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
     programs[i] = this.createProgram(gl, vertexShader, fragmentShader);
     programs[i].attributeBuffers = [];
-  }
-
-  if (postFileNames) {
-    for (var i = fileNames.length; i < fileNames.length + postFileNames.length; i++) {
-      var vertexShaderSource = require('./shaders/post/post-vert.glsl');
-      var fragmentShaderSource = require('./shaders/post/' + postFileNames[i-fileNames.length] + '-frag.glsl');
-
-      var vertexShader = this.createShader(gl, vertexShaderSource, gl.VERTEX_SHADER);
-      var fragmentShader = this.createShader(gl, fragmentShaderSource, gl.FRAGMENT_SHADER);
-      programs[i] = this.createProgram(gl, vertexShader, fragmentShader);
-      programs[i].attributeBuffers = [];
-    }
   }
 }
 

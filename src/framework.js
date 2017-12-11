@@ -1,4 +1,4 @@
-export const DEBUG = true;
+export const DEBUG = false;
 
 import Stats from 'stats-js';
 import WebGL2 from './webgl.js';
@@ -37,8 +37,8 @@ function init(callback, update) {
     framework.cameraControls.enableZoom = true;
     framework.cameraControls.rotateSpeed = 0.5;
 
-    framework.camera.position.set(0, 0, 40);
-    framework.cameraControls.target.set(0, 0, 0);
+    framework.camera.position.set(5, 5, 10);
+    framework.cameraControls.target.set(5, 5, 5);
 
     (function tick() {
       stats.begin();
